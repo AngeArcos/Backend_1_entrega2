@@ -1,0 +1,10 @@
+<div>
+   <h1>Hola {{user.name}} {{user.lastName}} </h1> 
+   <p>Email: {{user.email}} </p>
+   <p>Edad: {{user.age}} </p>
+   <p>Teléfono: {{user.phone}} </p>
+   {{#if isAdmin}}
+   {{/if}}
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

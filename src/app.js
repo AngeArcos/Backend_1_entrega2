@@ -13,13 +13,14 @@ const PORT = 8080;
 const app = express();
 
 const httpServer = new HttpServer(app)
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
-app.use(express.static('public'));
+//app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 app.engine('hbs', engine({
     extname: '.hbs' 

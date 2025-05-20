@@ -1,14 +1,21 @@
 import { Router } from "express";
 import fs from 'fs';
+import path from "path";
+import { fileURLToPath } from "url";
+import { v4 as uuidv4 } from "uuid";
 
 const productsRoutes = Router();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const productsFilePath = path.resolve(__dirname, "../../db/products.json");
 
 let idAutoincremental = 1;
 
 const getProducts = async () => {
     try{
-        const products = await fs.promises.readFile('src/db/products.json', 'utf-8'); 
+        const products = await fs.promises.readFile(productsFilePath, 'utf-8'); 
         const productsConverted = JSON.parse(products); 
         return productsConverted;
     } catch (error) {
@@ -21,7 +28,7 @@ const saveProducts = async (products) => {
     console.log({products}); 
     try{ 
         const pasedProducts = JSON.stringify(products);
-        await fs.promises.writeFile ('src/db/products.json', pasedProducts, 'utf-8');
+        await fs.promises.writeFile (productsFilePath, pasedProducts, 'utf-8');
         return true;
     }catch (error) {
         console.log({error});
@@ -61,8 +68,9 @@ productsRoutes.get('/', async (req, res) => {
 productsRoutes.post('/', async (req, res) => {
     const product = req.body;  
 
-    product.id = Math.floor(Math.random() * 10000);
-
+    //product.id = Math.floor(Math.random() * 10000);
+    product.id = uuidv4();
+    
     if(!product.title || !product.description || !product.code || !product.price || !product.status || !product.stock || !product.category){
         return res.status(400).send({status:'error', message: 'Product incomleted'}); 
     }

@@ -1,12 +1,19 @@
 import { Router } from "express";
-
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const cartsRoutes = Router();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const cartsFilePath = path.resolve(__dirname, "../../db/carts.json");
+
+
 const getCarts = async () => {
     try {
-        const carts = await fs.promises.readFile("src/db/carts.json", "utf-8");
+        const carts = await fs.promises.readFile(cartsFilePath, "utf-8");
         return JSON.parse(carts);
     } catch (error) {
         return [];
@@ -15,7 +22,7 @@ const getCarts = async () => {
 
 const saveCarts = async (carts) => {
     try {
-        await fs.promises.writeFile("src/db/carts.json", JSON.stringify(carts, null, 2), "utf-8");
+        await fs.promises.writeFile(cartsFilePath, JSON.stringify(carts, null, 2), "utf-8");
         return true;
     } catch (error) {
         console.error(error);
@@ -67,7 +74,7 @@ cartsRoutes.post("/:cid/product/:pid", async (req, res) => {
     const productIndex = cart.products.findIndex((product) => product.product === pid);
 
     if (productIndex === -1) {
-        cart.products.push({ product: pid });
+        cart.products.push({  product: pid, quantity: 1  });
     } else {
         cart.products[productIndex].quantity = (cart.products[productIndex].quantity || 1) + 1;
     }
